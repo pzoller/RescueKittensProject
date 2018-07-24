@@ -5,31 +5,26 @@ package com.pzrider.game;
  * Kittens" is a very simple, text based adventure game. Users can walk around
  * some scenery. That's all. It should really be extended to make it more
  * interesting!
- * 
+ * <p>
  * To play this game, create an instance of this class and call the "play"
  * method.
- * 
+ * <p>
  * This main class creates and initialises all the others: it creates all rooms,
  * creates the parser and starts the game. It also evaluates and executes the
  * commands that the parser returns.
- * 
+ *
  * @author Phil Zoller, Michael Kölling, and David J. Barnes
- * @version 2018.07.18 Added "look" command (6.14), "feed" command (6.15), list
- *          commands (6.16 & 6.18), prin room item (6.20)
- * 
  * @version 2018.07.09 Refactored rooms, per Ex 6.5, 6.6, 6.7, 6.8, 6.11
  */
 
-public class Game
-{
+public class Game {
     private Parser parser;
     private Room currentRoom;
 
     /**
      * Create the game and initialise its internal map.
      */
-    public Game()
-    {
+    public Game() {
         createRooms();
         parser = new Parser();
     }
@@ -37,8 +32,7 @@ public class Game
     /**
      * Create all the rooms and link their exits together.
      */
-    private void createRooms()
-    {
+    private void createRooms() {
         // Ex 6.11
         // Added cellar
         Room outside, drawingRoom, entry, studio, bathroom, hallway, library,
@@ -121,8 +115,7 @@ public class Game
     /**
      * Main play routine. Loops until end of play.
      */
-    public void play()
-    {
+    public void play() {
         printWelcome();
 
         // Enter the main command loop. Here we repeatedly read commands and
@@ -139,8 +132,7 @@ public class Game
     /**
      * Print out the opening message for the player.
      */
-    private void printWelcome()
-    {
+    private void printWelcome() {
         System.out.println();
         System.out.println("Welcome to the World of Zuul!");
         System.out.println(
@@ -169,12 +161,11 @@ public class Game
 
     /**
      * Given a command, process (that is: execute) the command.
-     * 
+     *
      * @param command The command to be processed.
      * @return true If the command ends the game, false otherwise.
      */
-    private boolean processCommand(Command command)
-    {
+    private boolean processCommand(Command command) {
         boolean wantToQuit = false;
 
         if (command.isUnknown()) {
@@ -182,26 +173,24 @@ public class Game
             return false;
         }
 
-        String commandWord = command.getCommandWord();
-        if (commandWord.equals("help")) {
-            printHelp();
-        } else
-            if (commandWord.equals("go")) {
+        CommandWord commandWord = command.getCommandWord();
+        switch (commandWord) {
+            case UNKNOWN:
+                System.out.println("I don't know what you mean...");
+                break;
+
+            case HELP:
+                printHelp();
+                break;
+
+            case GO:
                 goRoom(command);
-            }
-            // Ex 6.14 Add "look" command
-            else
-                if (commandWord.equals("look")) {
-                    look();
-                }
-                // Ex 6.15
-                else
-                    if (commandWord.equals("feed")) {
-                        feed();
-                    } else
-                        if (commandWord.equals("quit")) {
-                            wantToQuit = quit(command);
-                        }
+                break;
+
+            case QUIT:
+                wantToQuit = quit(command);
+                break;
+        }
 
         return wantToQuit;
     }
@@ -211,13 +200,12 @@ public class Game
     /**
      * Print out some help information. Here we print some stupid, cryptic
      * message and a list of the command words. Ex 6.16 List commands
-     * 
+     * <p>
      * Ex 6.18 Implement parser to return a list of commands and let printHelp
      * handle printing 6.16 Call a method to print available commands 6.18 Get a
      * list of commands and print it
      */
-    private void printHelp()
-    {
+    private void printHelp() {
         System.out.println("You are lost. You are alone. You wander");
         System.out.println("around at the university.");
         System.out.println();
@@ -225,15 +213,14 @@ public class Game
         // Ex 6.16 Print a list of available commands
         // Ex 6.18 Get a list of commands and print it
         // parser.showCommands();
-        System.out.println(parser.getCommandList());
+        parser.showCommandList();
     }
 
     /**
      * Try to go in one direction. If there is an exit, enter the new room,
      * otherwise print an error message.
      */
-    private void goRoom(Command command)
-    {
+    private void goRoom(Command command) {
         if (!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
             System.out.println("Go where?");
@@ -288,8 +275,7 @@ public class Game
     /*
      * Ex 6.15 Added "feed" command Feed the cats in te current room.
      */
-    private void feed()
-    {
+    private void feed() {
         System.out.println("You have fed the cats in this room.");
     }
 
@@ -297,16 +283,14 @@ public class Game
     /*
      * Ex 6.14 Add "look" command Reveal the contents of the room.
      */
-    private void look()
-    {
+    private void look() {
         System.out.println(currentRoom.getLongDescription());
     }
 
     /**
      * Ex 6.7 Modify to call Room class method to diplay rooms.
      */
-    private void printLocationInfo()
-    {
+    private void printLocationInfo() {
         // Ex 6.11
         // System.out.print("Exits: ");
         // Ex 6.7
@@ -339,11 +323,10 @@ public class Game
     /**
      * "Quit" was entered. Check the rest of the command to see whether we
      * really quit the game.
-     * 
+     *
      * @return true, if this command quits the game, false otherwise.
      */
-    private boolean quit(Command command)
-    {
+    private boolean quit(Command command) {
         if (command.hasSecondWord()) {
             System.out.println("Quit what?");
             return false;
